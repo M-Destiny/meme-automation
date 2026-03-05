@@ -18,14 +18,24 @@ def run_meme_automation(topic, use_meta_api=False):
     print(f"Concept: {concept}")
 
     # 2. Generate
+    import time
+    timestamp = int(time.time())
+    os.makedirs("assets/temp", exist_ok=True)
+    raw_path = f"assets/temp/raw_{timestamp}.png"
     generator = Generator()
-    image_path = generator.generate_image(concept["image_prompt"])
+    image_path = generator.generate_image(concept["image_prompt"], output_path=raw_path)
     
     # 3. Edit
+    os.makedirs("assets/generated", exist_ok=True)
+    meme_path = f"assets/generated/comicon_meme_{timestamp}.png"
     editor = Editor()
-    meme_path = editor.add_text_to_image(image_path, concept["top_caption"], concept["bottom_caption"])
+    meme_path = editor.add_text_to_image(image_path, concept["top_caption"], concept["bottom_caption"], output_path=meme_path)
     
-    # 4. Publish
+    # 4. Commit and Push
+    print(f"Committing and pushing meme to GitHub...")
+    os.system(f"git add {meme_path} && git commit -m 'Add generated meme {timestamp}' && git push origin main")
+
+    # 5. Publish
     if use_meta_api:
         publisher = MetaPublisher()
         # Meta API needs a public URL, this might fail with local paths

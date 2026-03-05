@@ -42,15 +42,19 @@ This project uses AI to brainstorm funny, culturally relevant concepts, generate
 ## 🎯 Project Goals & Logic
 
 ### Base Prompt Logic
-The automation follows a specific "Base Thinking" for all generations to ensure brand consistency for **Pune Comicon 2026**:
+The automation follows a specific "Base Thinking" to ensure brand consistency for **Pune Comicon 2026**. It supports two distinct styles:
 
-- **Themes:** Gaming, Anime, or Harry Potter.
-- **Top Text:** Always "Pune Comicon 2026".
-- **Bottom Text:** Always "Experience the magic of [theme] at Pune Comicon! March 21-22, Pune!".
+- **Posters:** Focus on epic, vibrant visuals with fixed branding text.
+  - **Top Text:** Always "Pune Comicon 2026".
+  - **Bottom Text:** "Experience the magic of [theme] at Pune Comicon! March 21-22, Pune!".
+- **Memes:** Focus on funny, relatable visuals (e.g., characters stuck in Pune traffic) with AI-generated funny captions.
+
+- **Themes:** Gaming, Anime, Harry Potter, Pokemon, etc.
+- **Mandatory Branding:** Every image includes a "PUNE COMICON 2026" watermark at the bottom.
 - **Visual Style:** 
     - **Gaming:** Popular icons/controllers with Pune landmarks backdrop.
-    - **Anime:** Vibrant characters integrated with local Pune elements.
-    - **Harry Potter:** Magical visuals (wands, spells) mashed up with Pune’s skyline.
+    - **Anime/Pokemon:** Vibrant characters integrated with local Pune elements.
+    - **Harry Potter:** Magical visuals mashed up with Pune’s skyline.
 
 ## 🎯 Future Plan (TODO)
 

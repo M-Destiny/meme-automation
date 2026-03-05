@@ -39,9 +39,10 @@ class Editor:
 
         # Scaling font size - smaller to avoid overflow
         font_size = int(w / 16)
+        # Branding font even smaller to be safe
         try:
             font = ImageFont.truetype(self.font_path, font_size)
-            branding_font = ImageFont.truetype(self.font_path, int(font_size * 0.7))
+            branding_font = ImageFont.truetype(self.font_path, int(font_size * 0.5))
         except OSError:
             print(f"Font not found at {self.font_path}, using default.")
             font = ImageFont.load_default()
@@ -49,9 +50,9 @@ class Editor:
 
         def draw_outline_text(text: str, position: tuple, anchor: str = "mt", custom_font=None):
             f = custom_font or font
-            # Wrap text to fit width
-            avg_char_width = (f.getlength("W") if hasattr(f, "getlength") else font_size) * 0.5
-            max_chars = max(1, int((w * 0.95) / avg_char_width))
+            # Wrap text to fit width (safer char width)
+            avg_char_width = (f.getlength("W") if hasattr(f, "getlength") else font_size) * 0.6
+            max_chars = max(1, int((w * 0.90) / avg_char_width))
             import textwrap
             wrapped_text = "\n".join(textwrap.wrap(text, width=max_chars))
             
@@ -82,13 +83,13 @@ class Editor:
             draw.multiline_text((adj_x, adj_y), wrapped_text, font=f, fill="white", align="center")
 
         # Top text
-        draw_outline_text(top_text.upper(), (w / 2, 20), anchor="mt")
+        draw_outline_text(top_text.upper(), (w / 2, 40), anchor="mt")
         
-        # Bottom text (higher up to leave room for branding)
-        draw_outline_text(bottom_text.upper(), (w / 2, h - 80), anchor="mb")
+        # Bottom text (pushed up to clear branding)
+        draw_outline_text(bottom_text.upper(), (w / 2, h - 120), anchor="mb")
         
-        # Mandatory PUNE COMICON branding
-        draw_outline_text("PUNE COMICON 2026", (w / 2, h - 35), anchor="mt", custom_font=branding_font)
+        # Mandatory PUNE COMICON branding (MB anchor to grow UPWARD from margin)
+        draw_outline_text("PUNE COMICON 2026", (w / 2, h - 30), anchor="mb", custom_font=branding_font)
 
         final = img.convert("RGB")
         final.save(output_path)

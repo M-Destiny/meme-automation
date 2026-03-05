@@ -4,16 +4,16 @@ import requests
 
 
 FONT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "fonts")
-FONT_URL = "https://github.com/google/fonts/raw/main/ofl/anton/Anton-Regular.ttf"
-FONT_FILE = os.path.join(FONT_DIR, "Anton-Regular.ttf")
+FONT_URL = "https://github.com/google/fonts/raw/main/ofl/bebasneue/BebasNeue-Regular.ttf"
+FONT_FILE = os.path.join(FONT_DIR, "BebasNeue-Regular.ttf")
 
 
 def ensure_font():
-    """Download Anton (Google Font) if not already present."""
+    """Download Bebas Neue (Google Font) if not already present."""
     if os.path.exists(FONT_FILE):
         return FONT_FILE
     os.makedirs(FONT_DIR, exist_ok=True)
-    print(f"Downloading Anton font from Google Fonts...")
+    print(f"Downloading Bebas Neue font from Google Fonts...")
     resp = requests.get(FONT_URL, timeout=30)
     resp.raise_for_status()
     with open(FONT_FILE, "wb") as f:
@@ -37,28 +37,30 @@ class Editor:
         draw = ImageDraw.Draw(img)
         w, h = img.size
 
-        # Scaling font size based on image width - making it smaller to avoid overflow
-        font_size = int(w / 18)  # Changed from w / 12 to w / 18
+        # Scaling font size - smaller to avoid overflow
+        font_size = int(w / 16)
         try:
             font = ImageFont.truetype(self.font_path, font_size)
+            branding_font = ImageFont.truetype(self.font_path, int(font_size * 0.7))
         except OSError:
             print(f"Font not found at {self.font_path}, using default.")
             font = ImageFont.load_default()
+            branding_font = ImageFont.load_default()
 
-        def draw_outline_text(text: str, position: tuple, anchor: str = "mt"):
+        def draw_outline_text(text: str, position: tuple, anchor: str = "mt", custom_font=None):
+            f = custom_font or font
             # Wrap text to fit width
-            avg_char_width = font_size * 0.5
-            max_chars = int((w * 0.9) / avg_char_width)
+            avg_char_width = (f.getlength("W") if hasattr(f, "getlength") else font_size) * 0.5
+            max_chars = max(1, int((w * 0.95) / avg_char_width))
             import textwrap
             wrapped_text = "\n".join(textwrap.wrap(text, width=max_chars))
             
-            # Calculate total text height to adjust vertical positioning manually
-            # Get bbox for multiline text
-            bbox = draw.multiline_textbbox(position, wrapped_text, font=font, align="center")
+            # Calculate total text height
+            bbox = draw.multiline_textbbox(position, wrapped_text, font=f, align="center")
             text_w = bbox[2] - bbox[0]
             text_h = bbox[3] - bbox[1]
             
-            # Adjust position based on anchor manually
+            # Adjust position
             adj_x = position[0] - text_w / 2
             if anchor == "mt":
                 adj_y = position[1]
@@ -67,20 +69,26 @@ class Editor:
             else:
                 adj_y = position[1]
 
-            outline = max(2, font_size // 25)
+            outline = max(2, font_size // 30)
             for xo in range(-outline, outline + 1):
                 for yo in range(-outline, outline + 1):
                     draw.multiline_text(
                         (adj_x + xo, adj_y + yo),
                         wrapped_text,
-                        font=font,
+                        font=f,
                         fill="black",
                         align="center"
                     )
-            draw.multiline_text((adj_x, adj_y), wrapped_text, font=font, fill="white", align="center")
+            draw.multiline_text((adj_x, adj_y), wrapped_text, font=f, fill="white", align="center")
 
-        draw_outline_text(top_text.upper(), (w / 2, 10), anchor="mt")
-        draw_outline_text(bottom_text.upper(), (w / 2, h - 10), anchor="mb")
+        # Top text
+        draw_outline_text(top_text.upper(), (w / 2, 20), anchor="mt")
+        
+        # Bottom text (higher up to leave room for branding)
+        draw_outline_text(bottom_text.upper(), (w / 2, h - 80), anchor="mb")
+        
+        # Mandatory PUNE COMICON branding
+        draw_outline_text("PUNE COMICON 2026", (w / 2, h - 35), anchor="mt", custom_font=branding_font)
 
         final = img.convert("RGB")
         final.save(output_path)

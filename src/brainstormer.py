@@ -14,30 +14,31 @@ class Brainstormer:
 
     def brainstorm(self, topic: str) -> dict | None:
         prompt = f"""
-        Generate a highly detailed Poster/Meme concept for 'Pune Comicon'.
+        Generate a JSON object for a 'Pune Comicon 2026' poster/meme.
+        Theme: {topic} (Gaming, Anime, Harry Potter, etc.)
+        Culture: Pune (landmarks, food, traffic).
         
-        Theme: Focus heavily on {topic} (Anime, Gaming, Harry Potter, etc.) mashed up with Pune culture.
-        Specific Context: Pune Comicon vibe, cosplay, local landmarks (Shaniwar Wada), 
-        local food (Misal Pav, Puran Poli), Pune traffic, and the fan convention experience.
-        
-        Requirements:
-        1. image_prompt: A high-quality, vibrant poster-style prompt for Stable Diffusion XL. 
-           Mention 'highly detailed', 'cinematic lighting', and 'comic book style'.
-        2. top_caption: A catchy, SHORT title or hook.
-        3. bottom_caption: A funny or epic sub-caption that fits the Pune context.
-        4. description: A fun Instagram caption.
-        5. tags: A string of hashtags.
-
-        CRITICAL: Keep captions concise so they don't overflow the image.
-
-        Respond ONLY with valid JSON.
+        Respond ONLY with a JSON object in this format:
+        {{
+          "image_prompt": "cinematic highly detailed 8k prompt about characters from {topic} in Pune",
+          "top_caption": "SHORT Title",
+          "bottom_caption": "Funny Pune sub-caption",
+          "description": "Fun IG caption",
+          "tags": "#tags #hashtags"
+        }}
         """
         response = self.client.models.generate_content(
             model=self.model, contents=prompt
         )
         try:
-            content = response.text.strip().replace("```json", "").replace("```", "")
-            return json.loads(content)
+            text = response.text.strip()
+            # Find the first { and last } to extract JSON
+            start = text.find('{')
+            end = text.rfind('}')
+            if start != -1 and end != -1:
+                content = text[start:end+1]
+                return json.loads(content)
+            return None
         except Exception as e:
             print(f"Error parsing Gemini response: {e}")
             print(f"Raw response: {response.text}")

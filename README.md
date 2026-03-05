@@ -39,6 +39,19 @@ This project uses AI to brainstorm funny, culturally relevant concepts, generate
    python3 test_flow.py "Anime x Harry Potter"
    ```
 
+## 🎯 Project Goals & Logic
+
+### Base Prompt Logic
+The automation follows a specific "Base Thinking" for all generations to ensure brand consistency for **Pune Comicon 2026**:
+
+- **Themes:** Gaming, Anime, or Harry Potter.
+- **Top Text:** Always "Pune Comicon 2026".
+- **Bottom Text:** Always "Experience the magic of [theme] at Pune Comicon! March 21-22, Pune!".
+- **Visual Style:** 
+    - **Gaming:** Popular icons/controllers with Pune landmarks backdrop.
+    - **Anime:** Vibrant characters integrated with local Pune elements.
+    - **Harry Potter:** Magical visuals (wands, spells) mashed up with Pune’s skyline.
+
 ## 🎯 Future Plan (TODO)
 
 - [ ] **Google Drive Integration:** Automate image backup to a specific shared folder.

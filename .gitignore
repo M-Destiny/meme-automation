@@ -1,4 +1,6 @@
 .env
 *.png
 session.json
+service-account.json
 __pycache__/
+assets/temp/

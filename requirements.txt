@@ -1,5 +1,6 @@
 instagrapi
 huggingface_hub
-google-generativeai
+google-genai
 Pillow
 python-dotenv
+requests

@@ -52,18 +52,32 @@ class Editor:
             import textwrap
             wrapped_text = "\n".join(textwrap.wrap(text, width=max_chars))
             
+            # Calculate total text height to adjust vertical positioning manually
+            # Get bbox for multiline text
+            bbox = draw.multiline_textbbox(position, wrapped_text, font=font, align="center")
+            text_w = bbox[2] - bbox[0]
+            text_h = bbox[3] - bbox[1]
+            
+            # Adjust position based on anchor manually
+            adj_x = position[0] - text_w / 2
+            if anchor == "mt":
+                adj_y = position[1]
+            elif anchor == "mb":
+                adj_y = position[1] - text_h
+            else:
+                adj_y = position[1]
+
             outline = max(2, font_size // 25)
             for xo in range(-outline, outline + 1):
                 for yo in range(-outline, outline + 1):
-                    draw.text(
-                        (position[0] + xo, position[1] + yo),
+                    draw.multiline_text(
+                        (adj_x + xo, adj_y + yo),
                         wrapped_text,
                         font=font,
                         fill="black",
-                        anchor=anchor,
                         align="center"
                     )
-            draw.text(position, wrapped_text, font=font, fill="white", anchor=anchor, align="center")
+            draw.multiline_text((adj_x, adj_y), wrapped_text, font=font, fill="white", align="center")
 
         draw_outline_text(top_text.upper(), (w / 2, 10), anchor="mt")
         draw_outline_text(bottom_text.upper(), (w / 2, h - 10), anchor="mb")

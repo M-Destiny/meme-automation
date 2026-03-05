@@ -85,8 +85,8 @@ class Editor:
         # Top text
         draw_outline_text(top_text.upper(), (w / 2, 40), anchor="mt")
         
-        # Bottom text (higher up to leave room for branding)
-        draw_outline_text(bottom_text.upper(), (w / 2, h - 150), anchor="mb")
+        # Bottom text
+        draw_outline_text(bottom_text.upper(), (w / 2, h - 60), anchor="mb")
         
         # Logo handling (Future Proofing)
         logo_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "logos")
@@ -98,22 +98,18 @@ class Editor:
                     logo_path = os.path.join(logo_dir, f_name)
                     break
         
-        branding_y = h - 30
         if logo_path:
             try:
                 logo = Image.open(logo_path).convert("RGBA")
                 # Scale logo to fit
-                logo_w = int(w * 0.15)
+                logo_w = int(w * 0.12)
                 logo_h = int(logo.height * (logo_w / logo.width))
                 logo = logo.resize((logo_w, logo_h), Image.Resampling.LANCZOS)
-                # Place logo above branding text
-                img.paste(logo, (int(w/2 - logo_w/2), h - 100 - logo_h), logo)
-                branding_y = h - 30
+                # Place logo in bottom corner or center below text if there is room
+                # Putting it bottom right for now
+                img.paste(logo, (w - logo_w - 20, h - logo_h - 20), logo)
             except Exception as e:
                 print(f"Error adding logo: {e}")
-
-        # Mandatory PUNE COMICON branding (MB anchor to grow UPWARD from margin)
-        draw_outline_text("PUNE COMICON 2026", (w / 2, branding_y), anchor="mb", custom_font=branding_font)
 
         final = img.convert("RGB")
         final.save(output_path)
